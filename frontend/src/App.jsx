@@ -11,10 +11,10 @@ import { useEffect } from "react";
 import LandingPage from "./Page/LandingPage";
 import RegisterPage from "./Page/RegisterPage";
 import LoginPage from "./Page/LoginPage";
-import StudentDashboard from "./Compoent/studentDashbord";
-import ApplyID from "./Compoent/ApplyID";
-import CheckStatus from "./compoent/CheckStatus";
-import VirtualID from "./Compoent/virtualid";
+import StudentDashboard from "./Component/studentDashbord";
+import ApplyID from "./Component/ApplyID";
+import CheckStatus from "./Component/CheckStatus";
+import VirtualID from "./Component/virtualid";
 import AdminLogin from "./Page/AdminLogin";
 
 function App() {
