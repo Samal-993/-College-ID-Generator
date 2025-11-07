@@ -1,0 +1,28 @@
+
+═══════════════════════════════════════════
+        GIET UNIVERSITY
+    Student ID Card Application
+═══════════════════════════════════════════
+
+APPLICATION ID: 690d5ebfa3ac156a1acdb578
+
+Student Details:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Name:           satish swain
+Reg No:         220133432
+Department:     EEE
+Gender:         Male
+DOB:            2025-11-19
+Blood Group:    A
+Section:        b
+Contact:        9938857768
+Address:        cuttack
+
+Status:         Pending Approval
+Submitted:      11/7/2025, 4:52:02 PM
+
+═══════════════════════════════════════════
+IMPORTANT: Save this Application ID
+Use it to check your application status
+═══════════════════════════════════════════
+    
