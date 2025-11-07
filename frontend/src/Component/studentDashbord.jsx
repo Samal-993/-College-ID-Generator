@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Outlet, useLocation, Navigate } from "react-router-dom";
-import Sidebar from "./sidebar";
+import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import DashboardWelcome from "./DashboardWelcome";
 import { useAuthStore } from "../store/useAuthStore";
