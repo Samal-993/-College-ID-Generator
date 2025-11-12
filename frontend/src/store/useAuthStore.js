@@ -31,10 +31,14 @@ export const useAuthStore = create((set) => ({
                 withCredentials: true,
             });
             set({ authUser: res.data });
-            toast.success("Account created successfully!");
+            toast.success("Account created successfully!",{
+                duration:3000
+            });
         } catch (error) {
             console.error("Signup error:", error);
-            toast.error(error?.response?.data?.message || "Signup failed");
+            toast.error(error?.response?.data?.message || "Signup failed",{
+               duration:3000
+            });
         } finally {
             set({ isSigningUp: false });
         }
@@ -46,10 +50,14 @@ export const useAuthStore = create((set) => ({
         try {
             const res = await axiosInstance.post("/student/login", data);
             set({ authUser: res.data });
-            toast.success("Login successfully!");
+            toast.success("Login successfully!",{
+                duration:3000
+            });
         } catch (error) {
             console.error("Login error:", error);
-            toast.error(error?.response?.data?.message || "Login failed");
+            toast.error(error?.response?.data?.message || "Login failed",{
+                duration:3000
+            });
         } finally {
             set({ isLoggingIn: false });
         }
@@ -60,7 +68,9 @@ export const useAuthStore = create((set) => ({
         try {
             await axiosInstance.get("/student/logout");
             set({ authUser: null });
-            toast.success("Logged out successfully");
+            toast.success("Logged out successfully",{
+                duration:3000
+            });
         } catch (error) {
             toast.error("Error logging out");
             console.log("Logout error:", error);
@@ -74,11 +84,15 @@ export const useAuthStore = create((set) => ({
             const res = await axiosInstance.post("/details", formData, {
                 withCredentials: true,
             });
-            toast.success("Application submitted successfully!");
+            toast.success("Application submitted successfully!",{
+                duration:3000
+            });
             return res.data;
         } catch (error) {
             console.error("Submit details error:", error);
-            toast.error(error?.response?.data?.error || "Submission failed");
+            toast.error(error?.response?.data?.error || "Submission failed",{
+                duration:3000
+            });
             throw error;
         } finally {
             set({ isSubmittingDetails: false });

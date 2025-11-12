@@ -1,13 +1,11 @@
-
 import { generateToken } from "../lib/utils.js";
 import Admin from "../models/admin.models.js";
 import bcrypt from "bcryptjs";
 import { ENV } from "../lib/env.js";
-
-
+import validator from "validator";
 
 export const signup = async (req, res) => {
-  const { name , email, password } = req.body;
+  const { name, email, password } = req.body;
 
   try {
     if (!name || !email || !password) {
@@ -25,8 +23,16 @@ export const signup = async (req, res) => {
         .status(400)
         .json({ message: "Please enter a valid email address" });
     }
+    if (!validator.isEmail(email)) {
+      return res
+        .status(400)
+        .json({ message: "Please enter a valid email address" });
+    }
 
-    const admin = await Admin.findOne({ email });
+    // Step 2️⃣ — Sanitize (clean) email input
+    const sanitizedEmail = validator.normalizeEmail(email);
+
+    const admin = await Admin.findOne({ email: sanitizedEmail });
 
     if (admin) {
       return res.status(400).json({ message: "Email already exists" });
@@ -49,9 +55,7 @@ export const signup = async (req, res) => {
         _id: newAdmin._id,
         name: newAdmin.name,
         email: newAdmin.email,
-        
       });
-
     } else {
       res.status(400).json({ message: "Invalid user data" });
     }
@@ -83,7 +87,7 @@ export const login = async (req, res) => {
     res.status(200).json({
       _id: admin._id,
       name: admin.name,
-      email:admin.email,
+      email: admin.email,
     });
   } catch (error) {
     console.error("error in login controller", error);
@@ -94,7 +98,7 @@ export const login = async (req, res) => {
 export const logout = async (_, res) => {
   res.clearCookie("jwt", {
     httpOnly: true,
-    sameSite: "lax",  // 👈 same as generateToken
+    sameSite: "lax", // 👈 same as generateToken
     secure: ENV.NODE_ENV === "production" ? true : false, // 👈 same as generateToken
     path: "/", // 👈 add this line
   });

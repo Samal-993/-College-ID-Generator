@@ -5,7 +5,7 @@ import { Home, Users, ListChecks } from "lucide-react";
 const menu = [
   { name: "Dashboard", to: "/admin", icon: <Home size={18} />, end: true },
   { name: "Students", to: "/admin/students", icon: <Users size={18} /> },
-  { name: "Departments", to: "/admin/departments", icon: <ListChecks size={18} /> },
+  { name: "Departments", to: "/admin/manage-admin", icon: <ListChecks size={18} /> },
 ];
 
 const AdminSidebar = () => {

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { LoaderIcon } from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
+import { Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -11,7 +12,7 @@ const Login = () => {
 
    const { login, isLoggingUp } = useAuthStore();
 
-
+const [showPassword, setShowPassword] = useState(false);
    const handleSubmit = (e) => {
       e.preventDefault();
   
@@ -49,29 +50,38 @@ const Login = () => {
           <div>
             <label className="block text-gray-200 mb-1">Password</label>
             <input
-              type="password"
-              name="password"
-              required
-              placeholder="Enter password"
-              className="w-full p-2 border border-gray-600 bg-[#111827] text-white rounded-lg focus:outline-none focus:ring focus:ring-blue-500"
-              onChange={(e) =>
-                          setFormData({ ...formData, password: e.target.value })
-                        }
-              value={formData.password}
-            />
+                  type={showPassword ? "text" : "password"}
+                  required
+                  placeholder="••••••••"
+                  className="w-full p-3 border border-gray-600 bg-[#111827] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                  value={formData.password}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-10 mt-6  transform -translate-y-1/2 text-slate-400 hover:text-slate-300"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
           </div>
 
-        <button
-                    className="auth-btn"
-                    type="submit"
-                    disabled={isLoggingUp}
-                  >
-                    {isLoggingUp ? (
-                      <LoaderIcon className="w-full h-5 animate-spin text-center" />
-                    ) : (
-                      "Login Account"
-                    )}
-                  </button>
+       <button
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition font-semibold disabled:bg-gray-600 disabled:cursor-not-allowed"
+              type="submit"
+              disabled={isLoggingUp}
+            >
+              {isLoggingUp ? (
+                <div className="flex items-center justify-center gap-2">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Signing in...
+                </div>
+              ) : (
+                "Login Account"
+              )}
+            </button>
         </form>
 
         <p className="text-center text-sm text-gray-300 mt-4">
