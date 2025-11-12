@@ -18,7 +18,9 @@ export const adminDetailsStore = create((set) => ({
             set({ students: res.data });
         } catch (error) {
             console.error("Error fetching students:", error);
-            toast.error("Failed to fetch student details");
+            toast.error("Failed to fetch student details",{
+                duration:3000
+            });
         } finally {
             set({ isLoading: false });
         }
@@ -28,11 +30,13 @@ export const adminDetailsStore = create((set) => ({
     approveStudent: async (id) => {
         try {
             const res = await axiosInstance.put(
-                `/details/${id}`,
+                `/details/${id}/status`,
                 { status: "Approved" },
                 { withCredentials: true }
             );
-            toast.success("Student approved!");
+            toast.success("Student approved!", {
+                duration:3000
+            });
             
             // Update local state
             set((state) => ({
@@ -42,7 +46,9 @@ export const adminDetailsStore = create((set) => ({
             }));
         } catch (error) {
             console.error("Error approving student:", error);
-            toast.error("Failed to approve student");
+            toast.error("Failed to approve student",{
+                duration:3000
+            });
         }
     },
 
@@ -50,11 +56,13 @@ export const adminDetailsStore = create((set) => ({
     rejectStudent: async (id) => {
         try {
             const res = await axiosInstance.put(
-                `/details/${id}`,
+                `/details/${id}/status`,
                 { status: "Rejected" },
                 { withCredentials: true }
             );
-            toast.success("Student rejected!");
+            toast.success("Student rejected!",{
+                duration:3000
+            });
             
             // Update local state
             set((state) => ({
@@ -64,7 +72,9 @@ export const adminDetailsStore = create((set) => ({
             }));
         } catch (error) {
             console.error("Error rejecting student:", error);
-            toast.error("Failed to reject student");
+            toast.error("Failed to reject student",{
+                duration:3000
+            });
         }
     },
 

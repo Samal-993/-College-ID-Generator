@@ -1,35 +1,118 @@
 // src/components/StudentIDForm.jsx
-import React, { useState } from 'react';
-import { useAuthStore } from '../store/useAuthStore';
-import { Copy, CheckCircle, Download, FileText } from 'lucide-react';
-import toast from 'react-hot-toast';
+import React, { useState, useEffect } from "react";
+import { useAuthStore } from "../store/useAuthStore";
+import { axiosInstance } from "../lib/axios"; // ✅ import added
+import { Copy, CheckCircle, Download, FileText } from "lucide-react";
+import toast from "react-hot-toast";
 
 const StudentIDForm = () => {
   const { submitDetails, isSubmittingDetails } = useAuthStore();
-  
+
   const [studentData, setStudentData] = useState({
-    name: '',
-    regNo: '',
-    dob: '',
-    gender: '',
-    bloodGroup: '',
-    department: '',
-    section: '',
-    phone: '',
-    contact: '',
-    address: '',
+    name: "",
+    regNo: "",
+    dob: "",
+    gender: "",
+    bloodGroup: "",
+    department: "",
+    section: "",
+    phone: "",
+    contact: "",
+    address: "",
     photo: null,
   });
 
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [status, setStatus] = useState("");
   const [submittedData, setSubmittedData] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [applicationId, setApplicationId] = useState('');
+  const [applicationId, setApplicationId] = useState("");
   const [copied, setCopied] = useState(false);
   const [step, setStep] = useState(1);
 
-  const departments = ['CSE', 'ECE', 'EEE', 'MECH', 'CIVIL', 'IT'];
-  const genders = ['Male', 'Female', 'Other'];
+  const departments = ["CSE", "ECE", "EEE", "MECH", "CIVIL", "IT"];
+  const genders = ["Male", "Female", "Other"];
 
+  // ✅ define steps here
+  const steps = [
+    { id: 1, label: "Personal" },
+    { id: 2, label: "Academic" },
+    { id: 3, label: "Contact" },
+    { id: 4, label: "Uploads" },
+    { id: 5, label: "Review" },
+  ];
+
+  // ✅ Check if student already submitted
+  useEffect(() => {
+    const checkSubmission = async () => {
+      try {
+        const res = await axiosInstance.get("/details/me");
+        if (res.data.hasSubmitted) {
+          setHasSubmitted(true);
+          setApplicationId(res.data.applicationId);
+          setStatus(res.data.status);
+        }
+      } catch (err) {
+        console.error("Error checking submission:", err);
+      }
+    };
+    checkSubmission();
+  }, []);
+
+  // ✅ Show “already submitted” message first
+  if (hasSubmitted) {
+    return (
+      <div className="min-h-[660px] bg-slate-900 py-10 px-4 flex items-center justify-center">
+        <div className="bg-gradient-to-br from-slate-800 to-emerald-900 rounded-2xl shadow-2xl p-8 text-center text-white max-w-md w-full">
+          <div className="mb-4">
+            <CheckCircle size={64} className="text-emerald-400 mx-auto" />
+          </div>
+          <h2 className="text-2xl font-bold mb-3">
+            🎉 You have already submitted your application!
+          </h2>
+          <p className="text-lg mb-2">
+            Your Application ID:{" "}
+            <span className="font-mono bg-slate-700 px-2 py-1 rounded">
+              {applicationId}
+            </span>
+          </p>
+          <p className="text-md mb-6">
+            Status:{" "}
+            <span
+              className={`font-semibold ${
+                status === "Approved"
+                  ? "text-green-400"
+                  : status === "Rejected"
+                  ? "text-red-400"
+                  : "text-yellow-400"
+              }`}
+            >
+              {status}
+            </span>
+          </p>
+          <div className="flex gap-3 justify-center">
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(applicationId);
+                toast.success("Application ID copied!");
+              }}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+            >
+              <Copy size={16} /> Copy ID
+            </button>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-slate-600 hover:bg-slate-700 text-white px-4 py-2 rounded-lg"
+            >
+              Refresh
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ✅ Form logic
   const handleChange = (e) => {
     const { name, value } = e.target;
     setStudentData((prev) => ({ ...prev, [name]: value }));
@@ -46,98 +129,79 @@ const StudentIDForm = () => {
     }
   };
 
-  const steps = [
-    { id: 1, label: 'Personal' },
-    { id: 2, label: 'Academic' },
-    { id: 3, label: 'Contact' },
-    { id: 4, label: 'Uploads' },
-    { id: 5, label: 'Review' },
-  ];
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     try {
-      const result = await submitDetails(studentData);
-      
-      if (result) {
-        const id = result.details._id || 'STU-' + Date.now();
-        setApplicationId(id);
-        setSubmittedData(studentData);
-        setShowModal(true);
-
-        // Reset form
-        setStudentData({
-          name: '',
-          regNo: '',
-          dob: '',
-          gender: '',
-          bloodGroup: '',
-          department: '',
-          section: '',
-          phone: '',
-          contact: '',
-          address: '',
-          photo: null,
-        });
-        setStep(1);
-      }
+      const res = await axiosInstance.post("/details", studentData);
+      const id = res.data.details?._id || "STU-" + Date.now();
+      setApplicationId(id);
+      setSubmittedData(studentData);
+      setShowModal(true);
+      setStep(1);
+      setStudentData({
+        name: "",
+        regNo: "",
+        dob: "",
+        gender: "",
+        bloodGroup: "",
+        department: "",
+        section: "",
+        phone: "",
+        contact: "",
+        address: "",
+        photo: null,
+      });
     } catch (error) {
-      console.error('Submission error:', error);
+      if (
+        error.response &&
+        error.response.data.message?.includes("already submitted")
+      ) {
+        setHasSubmitted(true);
+        setApplicationId(error.response.data.applicationId);
+        setStatus(error.response.data.status);
+        toast.error("You have already submitted this application!");
+      } else {
+        toast.error("Something went wrong!");
+      }
     }
   };
 
-  // Copy to clipboard function
   const copyToClipboard = () => {
     navigator.clipboard.writeText(applicationId);
     setCopied(true);
-    toast.success('Application ID copied to clipboard!');
+    toast.success("Application ID copied to clipboard!");
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Download application receipt
   const downloadReceipt = () => {
     const receiptText = `
 ═══════════════════════════════════════════
         GIET UNIVERSITY
     Student ID Card Application
 ═══════════════════════════════════════════
-
 APPLICATION ID: ${applicationId}
-
-Student Details:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Name:           ${submittedData.name}
-Reg No:         ${submittedData.regNo}
-Department:     ${submittedData.department}
-Gender:         ${submittedData.gender}
-DOB:            ${submittedData.dob || 'N/A'}
-Blood Group:    ${submittedData.bloodGroup || 'N/A'}
-Section:        ${submittedData.section || 'N/A'}
-Contact:        ${submittedData.contact || 'N/A'}
-Address:        ${submittedData.address || 'N/A'}
-
-Status:         Pending Approval
-Submitted:      ${new Date().toLocaleString()}
-
+Name: ${submittedData.name}
+Reg No: ${submittedData.regNo}
+Department: ${submittedData.department}
+Gender: ${submittedData.gender}
+Status: Pending Approval
+Submitted: ${new Date().toLocaleString()}
 ═══════════════════════════════════════════
-IMPORTANT: Save this Application ID
-Use it to check your application status
+Keep this Application ID safe!
 ═══════════════════════════════════════════
     `;
-
-    const blob = new Blob([receiptText], { type: 'text/plain' });
+    const blob = new Blob([receiptText], { type: "text/plain" });
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `Application_${applicationId}.txt`;
     a.click();
     window.URL.revokeObjectURL(url);
-    toast.success('Receipt downloaded!');
+    toast.success("Receipt downloaded!");
   };
 
   const inputBase =
-    'bg-slate-700/40 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500';
+    "bg-slate-700/40 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500";
 
   return (
     <div className="h-[660px] bg-slate-900 py-10 px-4">

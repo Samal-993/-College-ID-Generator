@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import AdminLayout from "./Admin/AdminLayout";
 import AdminDashboard from "./Admin/AdminDashboard ";
-import StudentTable from "./Admin/StudentTable";
+// import StudentTable from "./Admin/StudentTable";
 import AdminStudentsPage from "./Page/AdminStudentsPage ";
 import { useAuthStore } from "./store/useAuthStore";
 import { adminAuthStore } from "./store/adminAuthStore";
@@ -16,6 +16,7 @@ import ApplyID from "./Component/ApplyID";
 import CheckStatus from "./Component/CheckStatus";
 import VirtualID from "./Component/virtualid";
 import AdminLogin from "./Page/AdminLogin";
+import Manage_Admin from "./Admin/Manage_Admin";
 
 function App() {
   const { checkAuth: checkStudentAuth, isCheckingAuth: isCheckingStudent, authUser: studentUser } = useAuthStore();
@@ -34,7 +35,7 @@ function App() {
   return (
     <>
       <Toaster
-        position="top-right"
+        position="top-center"
         toastOptions={{
           duration: 3000,
           style: {
@@ -89,12 +90,12 @@ function App() {
 
         {/* Protected Admin Routes */}
         <Route 
-          path="/admin" 
+          path="/admin/*" 
           element={adminUser ? <AdminLayout /> : <Navigate to="/adminLogin" replace />}
         >
           <Route index element={<AdminDashboard />} />
           <Route path="students" element={<AdminStudentsPage />} />
-          <Route path="departments" element={<StudentTable />} />
+          <Route path="manage-admin"element={<Manage_Admin/>}/>
         </Route>
 
         {/* Catch All - Redirect to Home */}

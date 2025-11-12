@@ -3,6 +3,7 @@ import React, { useMemo, useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import toast from "react-hot-toast";
 import { adminDetailsStore } from "../store/adminDetailsStore";
+import { useNavigate } from "react-router-dom"; // ✅ useNavigate here
 
 const AdminTable = ({ columns, onView }) => {
   const { students, isLoading, fetchAllStudents, approveStudent, rejectStudent } = adminDetailsStore();
@@ -10,8 +11,8 @@ const AdminTable = ({ columns, onView }) => {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(1);
-  const perPage = 10;
-
+  const perPage = 10; 
+const navigate  =  useNavigate()
   // Fetch students when component mounts
   useEffect(() => {
     fetchAllStudents();
@@ -46,7 +47,9 @@ const AdminTable = ({ columns, onView }) => {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Export");
     XLSX.writeFile(wb, "students_export.xlsx");
-    toast.success("Data exported successfully!");
+    toast.success("Data exported successfully!",{
+      duration:3000
+    });
   };
 
   const getStatusBadge = (status) => {
@@ -104,6 +107,12 @@ const AdminTable = ({ columns, onView }) => {
         >
           Export Excel
         </button>
+          <button
+  onClick={() => navigate("/admin/departments")}
+  className="h-10 px-4 bg-gray-600 rounded-md text-white hover:bg-gray-700 transition-all duration-200"
+>
+  View
+</button>
       </div>
 
       {/* Table */}
@@ -153,12 +162,7 @@ const AdminTable = ({ columns, onView }) => {
                   ))}
                   <td className="px-3 py-2">
                     <div className="flex gap-2">
-                      <button
-                        onClick={() => onView?.(row)}
-                        className="px-2 py-1 bg-gray-700 rounded text-white text-xs hover:bg-gray-600 transition"
-                      >
-                        View
-                      </button>
+                    
                       <button
                         onClick={() => approveStudent(row._id)}
                         disabled={row.status === "Approved"}

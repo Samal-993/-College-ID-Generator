@@ -8,10 +8,10 @@ import validator from "validator";
 
 export const signup = async (req, res) => {
   console.log("REQUEST BODY:", req.body);
-  const { name, RegisterNo , email, password } = req.body;
+  const { name, regNo , email, password } = req.body;
 
   try {
-    if (!name || !RegisterNo || !email || !password) {
+    if (!name || !regNo || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
       
 
@@ -27,7 +27,7 @@ export const signup = async (req, res) => {
 
     const newStudent = new Student({
       name,
-      RegisterNo,
+      regNo,
       email,
       password: hashedPassword,
     });
@@ -39,7 +39,7 @@ export const signup = async (req, res) => {
       res.status(201).json({
         _id: newStudent._id,
         name: newStudent.name,
-        RegisterNo:newStudent.RegisterNo,
+        regNo:newStudent.regNo,
         email: newStudent.email,
         profilePic: newStudent.profilePic,
       });
